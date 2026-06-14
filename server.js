@@ -13,6 +13,9 @@ const port = Number(process.env.PORT || 3000);
 const adminUser = process.env.ADMIN_USER || "admin";
 const adminPassword = process.env.ADMIN_PASSWORD || "cambia-esta-clave";
 const sessionSecret = process.env.SESSION_SECRET || adminPassword;
+const supabaseUrl = process.env.SUPABASE_URL?.replace(/\/$/, "");
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+const useSupabase = Boolean(supabaseUrl && supabaseKey);
 
 const defaultPlayers = [
   { id: "arielon", emoji: "🦁", name: "Arielon", points: 0 },
@@ -47,11 +50,50 @@ async function ensureDataFile() {
   }
 }
 
+async function ensureStorage() {
+  if (!useSupabase) {
+    await ensureDataFile();
+    return;
+  }
+
+  await supabaseRequest("/players?on_conflict=id", {
+    method: "POST",
+    headers: { prefer: "resolution=ignore-duplicates,return=minimal" },
+    body: JSON.stringify(defaultPlayers)
+  });
+}
+
 async function readPlayers() {
+  if (useSupabase) {
+    const players = await supabaseRequest("/players?select=id,emoji,name,points");
+    return hydratePlayers(players).sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
+  }
+
   await ensureDataFile();
   const raw = await readFile(dataFile, "utf8");
   const players = hydratePlayers(JSON.parse(raw));
   return players.sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
+}
+
+async function supabaseRequest(path, options = {}) {
+  const response = await fetch(`${supabaseUrl}/rest/v1${path}`, {
+    ...options,
+    headers: {
+      apikey: supabaseKey,
+      authorization: `Bearer ${supabaseKey}`,
+      "content-type": "application/json",
+      ...(options.headers || {})
+    }
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(`Supabase error ${response.status}: ${message}`);
+  }
+
+  if (response.status === 204) return null;
+  const text = await response.text();
+  return text ? JSON.parse(text) : null;
 }
 
 function hydratePlayers(savedPlayers) {
@@ -62,6 +104,15 @@ function hydratePlayers(savedPlayers) {
 }
 
 async function writePlayers(players) {
+  if (useSupabase) {
+    await supabaseRequest("/players?on_conflict=id", {
+      method: "POST",
+      headers: { prefer: "resolution=merge-duplicates,return=minimal" },
+      body: JSON.stringify(hydratePlayers(players))
+    });
+    return;
+  }
+
   writeQueue = writeQueue.then(async () => {
     await ensureDataFile();
     await writeFile(dataFile, JSON.stringify(hydratePlayers(players), null, 2));
@@ -207,7 +258,7 @@ async function serveStatic(req, res, pathname) {
   }
 }
 
-await ensureDataFile();
+await ensureStorage();
 
 createServer(async (req, res) => {
   try {
