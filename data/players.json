@@ -1,0 +1,50 @@
+[
+  {
+    "id": "bra",
+    "name": "Bra",
+    "points": 18
+  },
+  {
+    "id": "edu",
+    "name": "Edu",
+    "points": 13
+  },
+  {
+    "id": "arielon",
+    "name": "Arielon",
+    "points": 11
+  },
+  {
+    "id": "rony",
+    "name": "Rony",
+    "points": 8
+  },
+  {
+    "id": "manu",
+    "emoji": "🔥",
+    "name": "Manu",
+    "points": 2
+  },
+  {
+    "id": "ferras",
+    "emoji": "⚡",
+    "name": "Ferras",
+    "points": 1
+  },
+  {
+    "id": "primo-franc",
+    "name": "Primo Franc",
+    "points": 1
+  },
+  {
+    "id": "mino",
+    "emoji": "🧠",
+    "name": "Mino",
+    "points": 0
+  },
+  {
+    "id": "sergi",
+    "name": "Sergi",
+    "points": 4
+  }
+]

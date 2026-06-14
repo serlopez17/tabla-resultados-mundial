@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tabla de Resultados | Quiniela</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Quiniela Mundial 2026</p>
+          <h1>Tabla de resultados</h1>
+        </div>
+        <button id="logoutButton" class="ghost hidden" type="button">Cerrar sesion</button>
+      </section>
+
+      <section class="card login-card" id="loginCard">
+        <h2>Acceso administrador</h2>
+        <form id="loginForm" class="login-form">
+          <label>
+            Usuario
+            <input name="username" autocomplete="username" required />
+          </label>
+          <label>
+            Contrasena
+            <input name="password" type="password" autocomplete="current-password" required />
+          </label>
+          <button type="submit">Entrar para editar</button>
+        </form>
+        <p class="message" id="loginMessage"></p>
+      </section>
+
+      <section class="card table-card">
+        <div class="table-header">
+          <div>
+            <h2>Posiciones</h2>
+            <p id="updatedText">Cargando resultados...</p>
+          </div>
+          <div class="admin-controls admin-only hidden">
+            <button id="editButton" type="button">Editar</button>
+            <button id="saveButton" class="ghost" type="button" disabled>Guardar</button>
+          </div>
+        </div>
+        <p class="message" id="adminMessage"></p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Participante</th>
+                <th>Puntos</th>
+                <th class="admin-only hidden">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="playersBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
