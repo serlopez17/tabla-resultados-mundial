@@ -87,6 +87,50 @@ label {
   margin-bottom: 1.5rem;
 }
 
+.hero-copy {
+  min-width: 0;
+}
+
+.hero-side {
+  display: grid;
+  justify-items: end;
+  gap: 1rem;
+}
+
+.hero-prize {
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  margin: 0;
+}
+
+.hero-photo {
+  width: clamp(8rem, 20vw, 13rem);
+  aspect-ratio: 4 / 5;
+  border: 1px solid rgba(103, 232, 165, 0.35);
+  border-radius: 1.5rem;
+  object-fit: cover;
+  object-position: center 32%;
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.35);
+}
+
+.hero-prize figcaption {
+  display: grid;
+  gap: 0.2rem;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.hero-prize figcaption span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
 .eyebrow {
   margin: 0 0 0.45rem;
   color: var(--accent);
@@ -242,6 +286,16 @@ tr.leader td {
   .hero,
   .table-header {
     display: grid;
+  }
+
+  .hero-side {
+    justify-items: start;
+  }
+
+  .hero-photo {
+    width: min(100%, 11rem);
+    aspect-ratio: 1;
+    border-radius: 999px;
   }
 
   .login-form,
