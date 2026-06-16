@@ -17,7 +17,9 @@ const emojisById = {
   edu: "🎯",
   sergi: "🚀",
   mino: "🧠",
-  rony: "🐺"
+  rony: "🐺",
+  anderson: "🦅",
+  miguelona: "👑"
 };
 
 let canEdit = false;

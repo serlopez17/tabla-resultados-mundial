@@ -13,8 +13,9 @@ const port = Number(process.env.PORT || 3000);
 const adminUser = process.env.ADMIN_USER || "admin";
 const adminPassword = process.env.ADMIN_PASSWORD || "cambia-esta-clave";
 const sessionSecret = process.env.SESSION_SECRET || adminPassword;
-const supabaseUrl = process.env.SUPABASE_URL?.replace(/\/$/, "");
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.SUPABASE_URL?.trim().replace(/\/$/, "");
+const supabaseKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || "").trim();
+const supabaseKeyType = process.env.SUPABASE_SERVICE_ROLE_KEY ? "service_role" : process.env.SUPABASE_ANON_KEY ? "anon" : "none";
 const useSupabase = Boolean(supabaseUrl && supabaseKey);
 
 const defaultPlayers = [
@@ -26,7 +27,9 @@ const defaultPlayers = [
   { id: "edu", emoji: "🎯", name: "Edu", points: 0 },
   { id: "sergi", emoji: "🚀", name: "Sergi", points: 0 },
   { id: "mino", emoji: "🧠", name: "Mino", points: 0 },
-  { id: "rony", emoji: "🐺", name: "Rony", points: 0 }
+  { id: "rony", emoji: "🐺", name: "Rony", points: 0 },
+  { id: "anderson", emoji: "🦅", name: "Anderson", points: 0 },
+  { id: "miguelona", emoji: "👑", name: "Miguelona", points: 0 },
 ];
 
 const mimeTypes = {
@@ -196,9 +199,32 @@ function normalizePlayer(input) {
   return { id, emoji, name, points };
 }
 
+function getStorageStatus() {
+  let supabaseHost = null;
+
+  if (supabaseUrl) {
+    try {
+      supabaseHost = new URL(supabaseUrl).host;
+    } catch {
+      supabaseHost = "invalid-url";
+    }
+  }
+
+  return {
+    storage: useSupabase ? "supabase" : "local",
+    supabaseHost,
+    supabaseKeyType,
+    dataFile: useSupabase ? null : dataFile
+  };
+}
+
 async function handleApi(req, res, pathname) {
   if (req.method === "GET" && pathname === "/api/players") {
     return json(res, 200, { players: await readPlayers(), canEdit: isValidSession(req) });
+  }
+
+  if (req.method === "GET" && pathname === "/api/storage") {
+    return json(res, 200, getStorageStatus());
   }
 
   if (req.method === "POST" && pathname === "/api/login") {
@@ -259,6 +285,13 @@ async function serveStatic(req, res, pathname) {
 }
 
 await ensureStorage();
+
+if (useSupabase) {
+  const { supabaseHost } = getStorageStatus();
+  console.log(`Persistencia activa: Supabase (${supabaseHost}, key=${supabaseKeyType})`);
+} else {
+  console.warn(`Persistencia local activa: ${dataFile}. En hosting sin disco persistente, los resultados se pueden perder al reiniciar.`);
+}
 
 createServer(async (req, res) => {
   try {

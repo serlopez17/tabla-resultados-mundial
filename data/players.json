@@ -46,5 +46,17 @@
     "id": "sergi",
     "name": "Sergi",
     "points": 4
+  },
+  {
+    "id": "anderson",
+    "emoji": "🦅",
+    "name": "Anderson",
+    "points": 0
+  },
+  {
+    "id": "miguelona",
+    "emoji": "👑",
+    "name": "Miguelona",
+    "points": 0
   }
 ]
