@@ -13,7 +13,7 @@ const port = Number(process.env.PORT || 3000);
 const adminUser = process.env.ADMIN_USER || "admin";
 const adminPassword = process.env.ADMIN_PASSWORD || "cambia-esta-clave";
 const sessionSecret = process.env.SESSION_SECRET || adminPassword;
-const supabaseUrl = normalizeSupabaseUrl(process.env.SUPABASE_URL);
+const supabaseUrl = process.env.SUPABASE_URL?.trim().replace(/\/$/, "");
 const supabaseKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || "").trim();
 const supabaseKeyType = process.env.SUPABASE_SERVICE_ROLE_KEY ? "service_role" : process.env.SUPABASE_ANON_KEY ? "anon" : "none";
 const useSupabase = Boolean(supabaseUrl && supabaseKey);
@@ -41,20 +41,6 @@ const mimeTypes = {
 };
 
 let writeQueue = Promise.resolve();
-
-function normalizeSupabaseUrl(value) {
-  if (!value) return "";
-
-  try {
-    const url = new URL(value.trim());
-    url.pathname = "";
-    url.search = "";
-    url.hash = "";
-    return url.toString().replace(/\/$/, "");
-  } catch {
-    return value.trim().replace(/\/rest\/v1\/?$/, "").replace(/\/$/, "");
-  }
-}
 
 async function ensureDataFile() {
   await mkdir(dataDir, { recursive: true });
