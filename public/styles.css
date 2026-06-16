@@ -124,13 +124,6 @@ label {
   text-align: center;
 }
 
-.hero-prize figcaption span {
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0;
-}
-
 .eyebrow {
   margin: 0 0 0.45rem;
   color: var(--accent);
